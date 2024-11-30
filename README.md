@@ -18,22 +18,23 @@ cd tic-tac-toe
 ```
 
 2. Install the required packages:
+
 ```bash
 python3 -m venv env
 ```
 
 3. Activate the virtual environment:
-``````bash
+```bash
 source env/bin/activate
 ```
 
 4. Install the required packages:
-``````bash
+```bash
 pip install -r requirements.txt
 ```
 
 5. Play the game:
-``````bash
+```bash
 python3 src/simulations/human_vs_qagent.py
 ```
 
