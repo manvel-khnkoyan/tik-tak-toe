@@ -1,7 +1,8 @@
 __pycache__
+__models__
 .env
 .vscode
 .idea
 .DS_Store
-q_table*
+*model.pkl
 env

@@ -1,12 +1,11 @@
 # environment.py
 import numpy as np
 
-class TicTacToeEnv:
+class TictactoeEnv:
     def __init__(self):
         self.board = np.zeros((3, 3), dtype=int)
 
     def reset(self):
-        """Resets the game board to the initial state."""
         self.board.fill(0)
         return self.board
     
@@ -14,17 +13,6 @@ class TicTacToeEnv:
         return self.board
 
     def step(self, action, player):
-        """
-        Updates the game board with the player's action.
-
-        Parameters:
-        - action: A tuple (row, col) indicating the cell to mark.
-        - player: The player's symbol (1 for 'X' and -1 for 'O').
-
-        Returns:
-        - next_state: The updated game board.
-        - winner: The winner of the game (1, -1, 0 for draw, or None if the game is ongoing).
-        """
         row, col = action
         if self.board[row, col] != 0:
             raise ValueError(f"Invalid move: Cell ({row}, {col}) is already occupied.")
@@ -33,7 +21,6 @@ class TicTacToeEnv:
         return self.board
 
     def check_winner(self):
-        """Checks the current board for a winner or a draw."""
         for player in [1, -1]:
             # Check rows and columns
             if any(np.all(self.board[i, :] == player) for i in range(3)) or \
@@ -47,6 +34,15 @@ class TicTacToeEnv:
         if not np.any(self.board == 0):
             return 0  # Game is a draw
         return None  # Game is ongoing
+    
+    def get_available_actions(self):
+        # Assuming self.board is a list or array of size 9, with 0 indicating empty
+        available = []
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j] == 0:
+                    available.append((i, j))
+        return available
 
     def render(self):
         symbols = {1: '❌', -1: '⭕'}
