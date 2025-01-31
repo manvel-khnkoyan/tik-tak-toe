@@ -1,14 +1,17 @@
-import sys
-import os
 import random
-sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
-from src.environment import TictactoeEnv
-from src.q_learn.agent import QLearAgent
+from environment import TictactoeEnv
+from agent_qlearn import QLearAgent
+from agent_dqn import DQNAgent
 
 # Agents
 agent1 = 'human'
-agent2 = QLearAgent(alpha=0, gamma=0, epsilon=0)
-agent2.load_model("src/qlearn-model.pkl")
+
+# ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ CHANGE AGENT HERE ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+#agent2 = QLearAgent(alpha=0, gamma=0, epsilon=0)
+#agent2.load_model("__model__qlearn.pkl")
+
+agent2 = DQNAgent()
+agent2.load_model("__model__dqn.pth")
 
 # Environment
 env = TictactoeEnv()
