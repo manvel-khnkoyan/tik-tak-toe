@@ -45,7 +45,8 @@ class TictactoeEnv:
         return available
 
     def render(self):
-        symbols = {1: '❌', -1: '⭕'}
+        #symbols = {1: '❌', -1: '⭕'}
+        symbols = {1: ' X', -1: ' O'}
         counter = 1  # Start block numbering from 1
         for row in self.board:
             items = []

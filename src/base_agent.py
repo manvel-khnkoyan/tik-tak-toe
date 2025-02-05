@@ -1,19 +1,14 @@
 import numpy as np
 
-"""
-Each agent play as player N: 1
-So any time agent is making a move, you need use correct env
-- if needed you may need to reverse the env.board
-"""
 class BaseAgent:
     def __init__(self, alpha=0.1, gamma=0.9, epsilon=0.1):
-        # This is a base class, so the __init__ method is intentionally left empty.
+        # This is a base class constructor. Derived classes should implement their own initialization.
         pass
 
-    def learn(self, prev_state_board, action, reward, next_state_board):
+    def learn(self, prev_state, action, reward, next_state, done):
         raise NotImplementedError
 
-    def choose_action(self, env):
+    def choose_action(self, state):
         raise NotImplementedError
     
     def load_model(self, path):
@@ -21,25 +16,25 @@ class BaseAgent:
     
     def save_model(self, path):
         raise NotImplementedError
-    
+
     def get_available_actions(self, board):
         return [tuple(pos) for pos in zip(*np.nonzero(board == 0))]
+
+    def learn_canonical(self, prev_state_board, action, reward, next_state_board, done):
+        prev_state, transform, _ = self.canonical_transform(prev_state_board)
+        canonical_action = transform(*action)
+        next_state, _, _ = self.canonical_transform(next_state_board)
+        self.learn(prev_state, canonical_action, reward, next_state, done)
     
-    def get_canonical_form(self, board):
-        board = board.reshape(3, 3)
-        symmetries = [
-            board, np.rot90(board), np.rot90(board, 2), np.rot90(board, 3),
-            np.fliplr(board), np.fliplr(np.rot90(board)), 
-            np.fliplr(np.rot90(board, 2)), np.fliplr(np.rot90(board, 3))
-        ]
-        canonical_candidates = []
-        for sym in symmetries:
-            flat_sym = sym.astype(int).flatten()
-            tuple_sym = tuple(int(x) for x in flat_sym)
-            canonical_candidates.append(tuple_sym)
-        return min(canonical_candidates)
-    
-    def get_canonical_info(self, board):
+    def choose_action_canonical(self, env):
+        state, _, inverse_transform = self.canonical_transform(env.board)
+        canonical_action = self.choose_action(state)
+        if canonical_action is None:
+            return None
+        original_action = inverse_transform(*canonical_action)
+        return original_action
+
+    def canonical_transform(self, board):
         board = board.reshape(3, 3)
         transforms = [
             (lambda r, c: (r, c),           lambda r, c: (r, c)),           # Identity

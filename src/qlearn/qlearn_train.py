@@ -1,9 +1,11 @@
-from environment import TictactoeEnv
-from agent_qlearn import QLearAgent
-from agent_dqn import DQNAgent
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import random
 import numpy as np
+from environment import TictactoeEnv
+from qlearn_agent import QLearAgent
 
 def linear_decay(start, end, step, total):
     return start - (start - end) * (step / total)
@@ -21,14 +23,13 @@ if __name__ == "__main__":
     num_episodes_batch = 100
 
     # Hyperparameters with decay
-    alpha_start, alpha_end = 0.9, 0.1
+    alpha_start, alpha_end = 0.9, 0.5
     gamma_start, gamma_end = 0.7, 0.9
-    epsilon_start, epsilon_end = 1.0, 0.01
+    epsilon_start, epsilon_end = 1.0, 0.1
 
     # ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ CHANGE AGENT HERE ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    # agent1 = QLearAgent(alpha=alpha_start, gamma=gamma_start, epsilon=epsilon_start)  # Q-learning Agent
-    agent1 = DQNAgent(alpha=alpha_start, gamma=gamma_start, epsilon=epsilon_start)      # Deep Q-learning Agent
-    agent2 = QLearAgent(alpha=0, gamma=0, epsilon=0)  # Random agent
+    agent1 = QLearAgent(alpha=alpha_start, gamma=gamma_start, epsilon=epsilon_start)
+    agent2 = QLearAgent(alpha=0, gamma=0, epsilon=0)
 
     # Performance tracking
     total_wins = 0
@@ -66,6 +67,8 @@ if __name__ == "__main__":
                 winner = env.check_winner()
                 
                 if winner is not None:
+                    done = True
+
                     # Game ended by Agent1's move
                     if winner == 1:
                         reward = 1.0
@@ -77,10 +80,12 @@ if __name__ == "__main__":
                         reward = 0.5
                         total_draw += 1
                     next_state = np.copy(env.board)
-                    agent1.learn(prev_state, last_action, reward, next_state)
-                    done = True
+                    
+                    agent1.learn(prev_state, last_action, reward, next_state, done)
+
                 else:
                     # Switch to opponent's turn
+                    # It will be learnt by opponent move
                     current_player = -1
 
             else:
@@ -92,6 +97,8 @@ if __name__ == "__main__":
                 winner = env.check_winner()
                 
                 if winner is not None:
+                    done = True
+
                     # Game ended by Agent2's move
                     if winner == 1:
                         reward = 1.0
@@ -104,13 +111,14 @@ if __name__ == "__main__":
                         total_draw += 1
                     if prev_state is not None:
                         next_state = np.copy(env.board)
-                        agent1.learn(prev_state, last_action, reward, next_state)
-                    done = True
+                        agent1.learn(prev_state, last_action, reward, next_state, done)
+                    
                 else:
                     # Game continues, learn from transition
                     if prev_state is not None:
                         next_state = np.copy(env.board)
-                        agent1.learn(prev_state, last_action, 0, next_state)
+                        agent1.learn(prev_state, last_action, 0, next_state, done)
+
                     # Switch back to Agent1's turn
                     current_player = 1
 
@@ -128,7 +136,5 @@ if __name__ == "__main__":
             # Reset counters
             total_wins = total_loss = total_draw = 0
 
-    # Save trained model
-    #agent1.save_model("__model__qlearn.pkl")
-    agent1.save_model("__model__dqn.pth")
+    agent1.save_model("__model__qlearn.pkl")
     print("Training completed!")

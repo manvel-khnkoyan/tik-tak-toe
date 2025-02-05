@@ -1,16 +1,15 @@
 import random
 from environment import TictactoeEnv
-from agent_qlearn import QLearAgent
-from agent_dqn import DQNAgent
+from qlearn.qlearn_agent import QLearAgent
+from dqn.dqn_agent import DQNAgent
 
 # Agents
-agent1 = 'human'
+#agent1 = 'human'
 
-# ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ CHANGE AGENT HERE ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-#agent2 = QLearAgent(alpha=0, gamma=0, epsilon=0)
-#agent2.load_model("__model__qlearn.pkl")
+agent1 = QLearAgent(alpha=0, gamma=0, epsilon=0)
+agent1.load_model("__model__qlearn.pkl")
 
-agent2 = DQNAgent()
+agent2 = DQNAgent(alpha=0, gamma=0, epsilon=0)
 agent2.load_model("__model__dqn.pth")
 
 # Environment
