@@ -1,0 +1,8 @@
+__pycache__
+__models__
+.env
+.idea
+.DS_Store
+*model.pkl
+*model.pth
+env
