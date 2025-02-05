@@ -94,7 +94,7 @@ class DQNAgent(BaseAgent):
         # Convert canonical action (row, col) to a single index
         action_idx = action[0] * 3 + action[1]
         
-        # Update the learning rate in case alpha is decayed
+        # Update the learning rate // self.alpha is being updated by the trainer script
         for param_group in self.optimizer.param_groups:
             param_group['lr'] = self.alpha
         
@@ -124,18 +124,19 @@ class DQNAgent(BaseAgent):
         self.optimizer.zero_grad()
         loss.backward()
         
+        # Logging ↓↓↓
         # Clip gradients to avoid explosion
         total_grad_norm = torch.nn.utils.clip_grad_norm_(
             self.main_net.parameters(), 
             0.5
         ).item()
-        
-        # Optional logging every 100 updates
         if self.update_counter % 100 == 0:
             print(f"Gradient Norm: {total_grad_norm:.4f}")
             print(f"Current Q: {current_q.mean().item():.4f} | Target Q: {target_q.mean().item():.4f}")
             print(f"Loss: {loss.item():.4f}")
-            
+        # Logging ↑↑↑
+
+        # Update the main network
         self.optimizer.step()
 
         # Update target network periodically
@@ -179,7 +180,7 @@ class DQNAgent(BaseAgent):
         }, path)
     
     def load_model(self, path):
-        checkpoint = torch.load(path)
+        checkpoint = torch.load(path, weights_only=True)
         self.main_net.load_state_dict(checkpoint['main_net'])
         self.target_net.load_state_dict(checkpoint['target_net'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])

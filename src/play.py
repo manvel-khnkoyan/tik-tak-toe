@@ -1,16 +1,33 @@
 import random
+import argparse
 from environment import TictactoeEnv
 from qlearn.qlearn_agent import QLearAgent
 from dqn.dqn_agent import DQNAgent
 
-# Agents
-#agent1 = 'human'
 
-agent1 = QLearAgent(alpha=0, gamma=0, epsilon=0)
-agent1.load_model("__model__qlearn.pkl")
+# Argument parsing
+parser = argparse.ArgumentParser(description="Tic-Tac-Toe with AI and Human Players")
+parser.add_argument("--player1", choices=["human", "dqn", "qlearn"], help="Choose player 1 type")
+parser.add_argument("--player2", choices=["human", "dqn", "qlearn"], help="Choose player 2 type")
+args = parser.parse_args()
 
-agent2 = DQNAgent(alpha=0, gamma=0, epsilon=0)
-agent2.load_model("__model__dqn.pth")
+# Initialize agents based on arguments
+def get_agent(player_type):
+    if player_type == "human":
+        return "human"
+    elif player_type == "dqn":
+        agent = DQNAgent(alpha=0, gamma=0, epsilon=0)
+        agent.load_model("__model__dqn.pth")
+        return agent
+    elif player_type == "qlearn":
+        agent = QLearAgent(alpha=0, gamma=0, epsilon=0)
+        agent.load_model("__model__qlearn.pkl")
+        return agent
+    else:
+        raise ValueError("Invalid argument. For help, run 'python play.py -h'")
+
+agent1 = get_agent(args.player1)
+agent2 = get_agent(args.player2)
 
 # Environment
 env = TictactoeEnv()
@@ -42,7 +59,7 @@ for _ in range(total_plays):
             action = None
             while action not in available_actions:
                 try:
-                    user_input = input("Your move: ")
+                    user_input = input("Player [1]: " if current_player == 1 else "Player [2]: ")
                     user_move = int(user_input) - 1  # Convert to 0-based index
                     row = user_move // 3
                     col = user_move % 3
