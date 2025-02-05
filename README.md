@@ -1,13 +1,6 @@
-# Tic-Tac-Toe with Reinforcement Learning
+# Reinforcement Learning Project
 
-## Project Description
-This project is a Python-based implementation of the classic Tic-Tac-Toe game, enhanced with a reinforcement learning agent using Q-learning. The agent learns optimal strategies by playing games and refining its decision-making based on the outcomes.
-
-The project includes:
-1. A **Tic-Tac-Toe environment** simulating the game's mechanics.
-2. A **Q-learning agent** that can train itself and compete against human players or other agents.
-
----
+This project implements Deep Q-Learning (DQN) and Q-Learning for training an agent in a given environment.
 
 ## Installation and Usage
 
@@ -38,10 +31,26 @@ pip install -r requirements.txt
 python3 src/simulations/human_vs_qagent.py
 ```
 
-## Features
-- 🎮 **Interactive Gameplay**: Play against the Q-learning agent and test its strategies.
-- 🤖 **Reinforcement Learning Integration**: The agent improves its strategy over time using Q-learning.
-- ⚙️ **Customizable Training**: Adjust hyperparameters like:
-  - **Learning Rate (α):** Controls how much the agent learns from new experiences.
-  - **Discount Factor (γ):** Determines the importance of future rewards.
-  - **Exploration Rate (ε):** Balances exploration and exploitation during training.
+## Training Agents
+
+#### Train using Q-Learning
+
+```bash
+python3 src/qlearn/qlearn_train.py
+```
+
+#### Train using Deep Q-Learning (DQN)
+
+```bash
+python3 src/dqn/dqn_train.py
+```
+
+## Playing the Trained Model
+
+After training, you can play using the trained model (adjust the script accordingly if needed):
+
+```bash
+python3 src/play.py --player1=human --player2=human
+```
+
+options for player1 and player2 are: `human`, `dqn`, `qlearn`
