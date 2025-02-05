@@ -26,14 +26,11 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-5. Play the game:
-```bash
-python3 src/simulations/human_vs_qagent.py
-```
-
 ## Training Agents
 
 #### Train using Q-Learning
+
+Each training will create a new model file in the `src/__models__` directory.
 
 ```bash
 python3 src/qlearn/qlearn_train.py
@@ -45,12 +42,32 @@ python3 src/qlearn/qlearn_train.py
 python3 src/dqn/dqn_train.py
 ```
 
-## Playing the Trained Model
+## Play The Game
 
-After training, you can play using the trained model (adjust the script accordingly if needed):
+After training, you can play using the trained models either against each other or against a human player.
 
 ```bash
-python3 src/play.py --player1=human --player2=human
+python3 src/play.py --player1=human --player2=qlearn
 ```
 
 options for player1 and player2 are: `human`, `dqn`, `qlearn`
+
+
+#### Examples
+
+Play against a human player:
+
+```bash
+python3 src/play.py --player1=human --player2=dqn
+```
+
+<img src="img/img1.png" />
+
+Against two trained agents:
+
+```bash
+python3 src/play.py --player1=dqn --player2=qlearn
+```
+
+<img src="img/img2.png" />
+
