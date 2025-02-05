@@ -8,7 +8,7 @@ class BaseAgent:
     def learn(self, prev_state, action, reward, next_state, done):
         raise NotImplementedError
 
-    def choose_action(self, state):
+    def choose_action(self, board):
         raise NotImplementedError
     
     def load_model(self, path):
@@ -26,13 +26,13 @@ class BaseAgent:
         next_state, _, _ = self.canonical_transform(next_state_board)
         self.learn(prev_state, canonical_action, reward, next_state, done)
     
-    def choose_action_canonical(self, env):
-        state, _, inverse_transform = self.canonical_transform(env.board)
+    def choose_action_canonical(self, board):
+        state, _, inverse_transform = self.canonical_transform(board)
         canonical_action = self.choose_action(state)
         if canonical_action is None:
             return None
-        original_action = inverse_transform(*canonical_action)
-        return original_action
+
+        return inverse_transform(*canonical_action)
 
     def canonical_transform(self, board):
         board = board.reshape(3, 3)
@@ -62,4 +62,4 @@ class BaseAgent:
                 best_transform = t
                 best_inverse = inv
 
-        return min_state, best_transform, best_inverse
+        return np.array(min_state).reshape(3, 3), best_transform, best_inverse

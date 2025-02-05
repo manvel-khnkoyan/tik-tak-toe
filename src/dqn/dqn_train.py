@@ -2,6 +2,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from pathlib import Path
 from environment import TictactoeEnv
 from dqn_agent import DQNAgent
 
@@ -135,7 +136,8 @@ if __name__ == "__main__":
             # Reset counters
             total_wins = total_loss = total_draw = 0
 
-    # ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ CHANGE AGENT HERE ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    #agent1.save_model("__model__qlearn.pkl")
-    agent1.save_model("__model__dqn.pth")
+    # Save the model
+    model_dir = "src/__models__"
+    os.makedirs(model_dir, exist_ok=True)
+    agent1.save_model(os.path.join(model_dir, "dqn.pth"))
     print("Training completed!")

@@ -1,7 +1,6 @@
 __pycache__
-__model__*
+__models__
 .env
-.vscode
 .idea
 .DS_Store
 *model.pkl

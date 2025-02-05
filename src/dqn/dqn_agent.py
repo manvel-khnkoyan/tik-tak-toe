@@ -45,8 +45,6 @@ class ReplayBuffer:
     def __len__(self):
         return len(self.buffer)
 
-# Enhanced DQN Agent that assumes states are already canonical.
-# The BaseAgent’s canonical methods will be used externally.
 class DQNAgent(BaseAgent):
     def __init__(self, 
                  input_size=9,
@@ -59,8 +57,7 @@ class DQNAgent(BaseAgent):
                  epsilon_decay=0.995,
                  batch_size=64,
                  target_update=64):
-        
-        # Initialize BaseAgent (which holds canonical_transform logic)
+
         super().__init__(alpha, gamma, epsilon)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.input_size = input_size
@@ -82,16 +79,10 @@ class DQNAgent(BaseAgent):
         self.buffer     = ReplayBuffer()
 
     def learn(self, prev_state, action, reward, next_state, done):
-        """
-        Expects:
-          - prev_state and next_state: canonical representations (e.g. a 9-element array or equivalent)
-          - action: a canonical (row, col) tuple
-        """
-        # Flatten the canonical states for the network
         prev_state_flat = np.array(prev_state).flatten()
         next_state_flat = np.array(next_state).flatten()
         
-        # Convert canonical action (row, col) to a single index
+        # Convert action (row, col) to a single index
         action_idx = action[0] * 3 + action[1]
         
         # Update the learning rate // self.alpha is being updated by the trainer script
@@ -144,18 +135,13 @@ class DQNAgent(BaseAgent):
         if self.update_counter % self.target_update == 0:
             self.target_net.load_state_dict(self.main_net.state_dict())
 
-    def choose_action(self, canonical_state):
-        """
-        Expects:
-          - canonical_state: already transformed to canonical form.
-          Returns a canonical (row, col) action.
-        """
-        canonical_flat = np.array(canonical_state).flatten()
-        canonical_board = np.array(canonical_state).reshape(3, 3)
-        if not np.any(canonical_board == 0):
+    def choose_action(self, state):
+        flat = np.array(state).flatten()
+        board = np.array(state).reshape(3, 3)
+        if not np.any(board == 0):
             return None
         
-        available_actions = self.get_available_actions(canonical_board)
+        available_actions = self.get_available_actions(board)
         if not available_actions:
             return None
 
@@ -164,7 +150,7 @@ class DQNAgent(BaseAgent):
             return random.choice(available_actions)
 
         # Otherwise, choose the action with the highest Q-value among valid ones
-        state_tensor = torch.FloatTensor(canonical_flat).unsqueeze(0).to(self.device)
+        state_tensor = torch.FloatTensor(flat).unsqueeze(0).to(self.device)
         with torch.no_grad():
             q_values = self.main_net(state_tensor).squeeze(0).cpu().numpy()
             # Map available (row, col) actions to indices

@@ -23,11 +23,10 @@ if __name__ == "__main__":
     num_episodes_batch = 100
 
     # Hyperparameters with decay
-    alpha_start, alpha_end = 0.9, 0.5
+    alpha_start, alpha_end = 0.9, 0.1
     gamma_start, gamma_end = 0.7, 0.9
     epsilon_start, epsilon_end = 1.0, 0.1
 
-    # ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ CHANGE AGENT HERE ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     agent1 = QLearAgent(alpha=alpha_start, gamma=gamma_start, epsilon=epsilon_start)
     agent2 = QLearAgent(alpha=0, gamma=0, epsilon=0)
 
@@ -61,7 +60,7 @@ if __name__ == "__main__":
             if current_player == 1:
                 # Agent1's turn
                 prev_state = np.copy(env.board)
-                last_action = agent1.choose_action(env.board)
+                last_action = agent1.choose_action_canonical(env.board)
                 
                 env.step(last_action, current_player)
                 winner = env.check_winner()
@@ -81,7 +80,7 @@ if __name__ == "__main__":
                         total_draw += 1
                     next_state = np.copy(env.board)
                     
-                    agent1.learn(prev_state, last_action, reward, next_state, done)
+                    agent1.learn_canonical(prev_state, last_action, reward, next_state, done)
 
                 else:
                     # Switch to opponent's turn
@@ -111,13 +110,13 @@ if __name__ == "__main__":
                         total_draw += 1
                     if prev_state is not None:
                         next_state = np.copy(env.board)
-                        agent1.learn(prev_state, last_action, reward, next_state, done)
+                        agent1.learn_canonical(prev_state, last_action, reward, next_state, done)
                     
                 else:
                     # Game continues, learn from transition
                     if prev_state is not None:
                         next_state = np.copy(env.board)
-                        agent1.learn(prev_state, last_action, 0, next_state, done)
+                        agent1.learn_canonical(prev_state, last_action, 0, next_state, done)
 
                     # Switch back to Agent1's turn
                     current_player = 1
@@ -136,5 +135,8 @@ if __name__ == "__main__":
             # Reset counters
             total_wins = total_loss = total_draw = 0
 
-    agent1.save_model("__model__qlearn.pkl")
+    # Save the model
+    model_dir = "src/__models__"
+    os.makedirs(model_dir, exist_ok=True)
+    agent1.save_model(os.path.join(model_dir, "qlearn.pkl"))
     print("Training completed!")

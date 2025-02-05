@@ -1,4 +1,4 @@
-# Reinforcement Learning Project
+# Tik-Tac-Toe: Reinforcement Learning
 
 This project implements Deep Q-Learning (DQN) and Q-Learning for training an agent in a given environment.
 

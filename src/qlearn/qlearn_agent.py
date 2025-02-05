@@ -54,6 +54,7 @@ class QLearAgent(BaseAgent):
         self.q_table[prev_state][action] = new_q
 
     def save_model(self, path):
+        # Save the Q-table to a file
         with open(path, "wb") as f:
             pickle.dump(self.q_table, f)
 
