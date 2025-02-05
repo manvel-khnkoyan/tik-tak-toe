@@ -1,3 +1,0 @@
-numpy==1.26.1
-torch==2.0.1
-torchvision==0.15.2
